@@ -54,6 +54,10 @@ function mobileOffset(index: number) {
   return ["-3vh", "6vh", "5vh", "-4vh"][index % 4];
 }
 
+function tabletOffset(index: number) {
+  return ["-9vh", "4vh", "-2vh", "8vh", "-7vh", "5vh"][index % 6];
+}
+
 function GalleryPhoto({
   photo,
   index,
@@ -68,11 +72,12 @@ function GalleryPhoto({
   const cellStyle = {
     "--desktop-offset": desktopOffset(index),
     "--mobile-offset": mobileOffset(index),
+    "--tablet-offset": tabletOffset(index),
   } as CSSProperties;
 
   return (
     <div
-      className="flex h-full items-start justify-center [transform:translateY(var(--mobile-offset))] md:[transform:translateY(var(--desktop-offset))]"
+      className="flex h-full items-start justify-center [transform:translateY(var(--mobile-offset))] md:[transform:translateY(var(--tablet-offset))] xl:[transform:translateY(var(--desktop-offset))]"
       style={cellStyle}
     >
       <button
@@ -87,7 +92,7 @@ function GalleryPhoto({
           src={photo.src}
           alt={photo.alt}
           fill
-          sizes="(max-width: 767px) 52vw, 20vw"
+          sizes="(max-width: 639px) 58vw, (max-width: 1023px) 38vw, (max-width: 1279px) 29vw, 20vw"
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025] group-active:scale-[0.985] group-active:duration-100"
           quality={85}
           loading={index < 12 ? "eager" : "lazy"}
@@ -116,9 +121,9 @@ function Thumbnail({
       aria-current={active ? "true" : undefined}
       className={`focus-thumbnail relative shrink-0 overflow-hidden transition-transform duration-500 active:scale-[0.96] ${
         active
-          ? "md:translate-x-[72px]"
+          ? "lg:translate-x-[72px]"
           : "hover:translate-x-1"
-      } ${photo.width >= photo.height ? "w-24" : "w-14 md:w-24"}`}
+      } ${photo.width >= photo.height ? "w-24" : "w-14 lg:w-24"}`}
       style={{ aspectRatio: photoAspectRatio(photo) }}
     >
       <Image
@@ -253,7 +258,7 @@ function FocusView({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.995 }}
       transition={APPLE_SPRING}
-      className="fixed inset-0 z-[110] bg-[#f5f3f0] text-[#0c0c0c]"
+      className="fixed inset-0 z-[110] h-[100dvh] bg-[#f5f3f0] text-[#0c0c0c]"
       role="dialog"
       aria-modal="true"
       aria-label={`Viewing ${photo.alt}`}
@@ -264,7 +269,7 @@ function FocusView({
         onClick={onClose}
         whileTap={{ scale: 0.88 }}
         transition={PRESS_SPRING}
-        className="absolute left-1/2 top-2 z-[130] flex size-12 -translate-x-1/2 items-center justify-center md:top-3"
+        className="absolute left-1/2 top-[max(0.5rem,env(safe-area-inset-top))] z-[130] flex size-12 -translate-x-1/2 items-center justify-center lg:top-3"
         aria-label="Close photo"
         data-cursor="hover"
       >
@@ -272,10 +277,10 @@ function FocusView({
         <span className="absolute h-7 w-[2px] bg-[#0c0c0c]" />
       </motion.button>
 
-      <div className="relative flex h-full flex-col md:block">
+      <div className="relative flex h-full flex-col lg:block">
         <div
           ref={railRef}
-          className="order-2 flex h-28 shrink-0 items-center gap-3 overflow-x-auto px-5 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:absolute md:inset-y-0 md:left-0 md:z-20 md:h-auto md:w-52 md:flex-col md:items-start md:gap-5 md:overflow-x-hidden md:overflow-y-auto md:px-0 md:py-0 md:pl-5 md:[scroll-padding-block:45vh]"
+          className="order-2 flex h-[calc(7rem+env(safe-area-inset-bottom))] shrink-0 items-center gap-3 overflow-x-auto px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] [scrollbar-width:none] [scroll-padding-inline:1rem] [&::-webkit-scrollbar]:hidden sm:px-6 lg:absolute lg:inset-y-0 lg:left-0 lg:z-20 lg:h-auto lg:w-52 lg:flex-col lg:items-start lg:gap-5 lg:overflow-x-hidden lg:overflow-y-auto lg:px-0 lg:py-0 lg:pl-5 lg:[scroll-padding-block:45vh]"
         >
           {photos.map((item, photoIndex) => (
             <Thumbnail
@@ -287,7 +292,7 @@ function FocusView({
           ))}
         </div>
 
-        <div className="relative order-1 flex min-h-0 flex-1 items-center justify-center px-5 pb-4 pt-16 md:absolute md:inset-0 md:px-[19vw] md:pb-16 md:pt-16">
+        <div className="relative order-1 flex min-h-0 flex-1 items-center justify-center px-4 pb-3 pt-[max(4rem,calc(env(safe-area-inset-top)+3.25rem))] sm:px-8 lg:absolute lg:inset-0 lg:px-[19vw] lg:pb-16 lg:pt-16">
           <div className="relative h-full w-full">
             <AnimatePresence initial={false}>
               <motion.div
@@ -311,7 +316,7 @@ function FocusView({
                   src={photo.src}
                   alt={photo.alt}
                   fill
-                  sizes="(max-width: 767px) 100vw, calc(100vw - 180px)"
+                  sizes="(max-width: 1023px) 100vw, calc(100vw - 180px)"
                   className="object-contain"
                   quality={85}
                   preload
@@ -326,7 +331,7 @@ function FocusView({
             onClick={onClose}
             whileTap={{ scale: 0.94 }}
             transition={PRESS_SPRING}
-            className="absolute bottom-3 left-1/2 -translate-x-1/2 text-base font-black uppercase tracking-[-0.04em] transition-opacity hover:opacity-40 md:bottom-4 md:text-2xl"
+            className="absolute bottom-2 left-1/2 -translate-x-1/2 text-base font-black uppercase tracking-[-0.04em] transition-opacity hover:opacity-40 lg:bottom-4 lg:text-2xl"
           >
             Back
           </motion.button>
@@ -358,14 +363,22 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
     const previousScrollRestoration = window.history.scrollRestoration;
     window.history.scrollRestoration = "manual";
 
-    const resetScroll = () => window.scrollTo(0, 0);
+    const resetScroll = () => {
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      window.scrollTo(0, 0);
+    };
     resetScroll();
     const frame = requestAnimationFrame(resetScroll);
+    const timers = [0, 50, 150, 350].map((delay) => window.setTimeout(resetScroll, delay));
     window.addEventListener("pageshow", resetScroll);
+    window.addEventListener("load", resetScroll);
 
     return () => {
       cancelAnimationFrame(frame);
+      timers.forEach((timer) => window.clearTimeout(timer));
       window.removeEventListener("pageshow", resetScroll);
+      window.removeEventListener("load", resetScroll);
       window.history.scrollRestoration = previousScrollRestoration;
     };
   }, []);
@@ -480,13 +493,23 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
   );
 
   useLayoutEffect(() => {
-    const previousOverflow = document.body.style.overflow;
+    const root = document.documentElement;
+    const previousRootOverflow = root.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
     if (focusIndex !== null || navOpen || introVisible) {
+      root.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
     }
 
+    if (introVisible) {
+      root.scrollTop = 0;
+      document.body.scrollTop = 0;
+      window.scrollTo(0, 0);
+    }
+
     return () => {
-      document.body.style.overflow = previousOverflow;
+      root.style.overflow = previousRootOverflow;
+      document.body.style.overflow = previousBodyOverflow;
     };
   }, [focusIndex, introVisible, navOpen]);
 
@@ -541,7 +564,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         onClick={() => setNavOpen((open) => !open)}
         whileTap={{ scale: 0.88 }}
         transition={PRESS_SPRING}
-        className="menu-trigger fixed left-1/2 top-2 z-[100] flex size-12 -translate-x-1/2 items-center justify-center text-[#0c0c0c] md:top-2"
+        className="menu-trigger fixed left-1/2 top-[max(0.5rem,env(safe-area-inset-top))] z-[100] flex size-12 -translate-x-1/2 items-center justify-center text-[#0c0c0c]"
         aria-label={navOpen ? "Close photography menu" : "Open photography menu"}
         aria-expanded={navOpen}
         aria-controls="photography-menu"
@@ -566,24 +589,24 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.985, y: -10 }}
             transition={APPLE_SPRING}
-            className="photography-material fixed inset-0 z-[90] overflow-hidden text-[#0c0c0c]"
+            className="photography-material fixed inset-0 z-[90] h-[100dvh] overflow-x-hidden overflow-y-auto text-[#0c0c0c]"
             style={{ transformOrigin: "50% 2.75rem" }}
             role="dialog"
             aria-modal="true"
             aria-label="Photography information and navigation"
           >
-            <div className="mx-auto flex min-h-full w-full flex-col px-5 pb-5 pt-20 md:px-6 md:pb-4 md:pt-[5.5rem]">
+            <div className="mx-auto flex min-h-full w-full flex-col px-[max(1.25rem,env(safe-area-inset-left))] pb-[max(1.25rem,env(safe-area-inset-bottom))] pr-[max(1.25rem,env(safe-area-inset-right))] pt-[max(5rem,calc(env(safe-area-inset-top)+4rem))] sm:px-8 lg:px-10 lg:pb-6 lg:pt-[5.5rem]">
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...APPLE_SPRING, delay: 0.1 }}
                 className="flex min-h-0 flex-1 flex-col items-center text-center"
               >
-                <nav className="text-[clamp(2.65rem,5vw,4.8rem)] font-black uppercase leading-[0.9] tracking-[-0.065em]" aria-label="Photography navigation">
+                <nav className="text-[clamp(2.35rem,10vw,4.8rem)] font-black uppercase leading-[0.9] tracking-[-0.065em] sm:text-[clamp(3rem,7vw,4.8rem)] lg:text-[clamp(2.65rem,5vw,4.8rem)]" aria-label="Photography navigation">
                   <button onClick={() => setNavOpen(false)} className="block uppercase transition-opacity hover:opacity-35">Overview</button>
                   <a href="#work" onClick={() => setNavOpen(false)} className="block uppercase transition-opacity hover:opacity-35">Work</a>
                 </nav>
-                <p className="my-auto max-w-[1220px] text-[clamp(1.45rem,3.3vw,3.15rem)] font-black uppercase leading-[1.03] tracking-[-0.055em]">
+                <p className="my-auto max-w-[1220px] py-6 text-[clamp(1.05rem,5.2vw,1.7rem)] font-black uppercase leading-[1.03] tracking-[-0.055em] sm:text-[clamp(1.5rem,4vw,2.5rem)] lg:text-[clamp(1.45rem,3.3vw,3.15rem)]">
                   Sahil Bhagat is a data engineer and visual storyteller based in New York. His photographs follow quiet weather, city rhythms, and the small details that make a place feel lived in.
                 </p>
               </motion.div>
@@ -592,20 +615,20 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...APPLE_SPRING, delay: 0.16 }}
-                className="grid grid-cols-[1fr_auto] items-end gap-4"
+                className="grid grid-cols-[1fr_auto] items-end gap-x-4 gap-y-5"
               >
                 <a
                   href="mailto:sahilbhagat1497@gmail.com"
-                  className="text-left text-[clamp(1.7rem,3.4vw,3.7rem)] font-black uppercase leading-none tracking-[-0.06em] transition-opacity hover:opacity-35"
+                  className="text-left text-[clamp(1.35rem,6vw,2rem)] font-black uppercase leading-none tracking-[-0.06em] transition-opacity hover:opacity-35 sm:text-[clamp(1.8rem,4.5vw,3rem)] lg:text-[clamp(1.7rem,3.4vw,3.7rem)]"
                   data-cursor="hover"
                 >
                   Contact me
                 </a>
-                <div className="flex gap-6 text-[clamp(1.7rem,3.4vw,3.7rem)] font-black uppercase leading-none tracking-[-0.06em]">
+                <div className="flex gap-4 text-[clamp(1.35rem,6vw,2rem)] font-black uppercase leading-none tracking-[-0.06em] sm:gap-6 sm:text-[clamp(1.8rem,4.5vw,3rem)] lg:text-[clamp(1.7rem,3.4vw,3.7rem)]">
                   <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" className="transition-opacity hover:opacity-35">IN</a>
                   <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" className="transition-opacity hover:opacity-35">LI</a>
                 </div>
-                <span className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] font-semibold uppercase md:text-xs">© Copyright 2026 — all rights reserved</span>
+                <span className="pointer-events-none col-span-2 text-center text-[9px] font-semibold uppercase tracking-[0.08em] sm:text-[10px] lg:text-xs">© Copyright 2026 — all rights reserved</span>
               </motion.div>
             </div>
           </motion.div>
@@ -623,17 +646,17 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
       <section
         ref={gridRef}
         id="work"
-        className="relative min-h-screen overflow-hidden pb-[24vh] pt-[clamp(66px,10vh,110px)]"
+        className="relative min-h-screen overflow-hidden pb-[18vh] pt-[max(4.5rem,calc(env(safe-area-inset-top)+4rem))] sm:pb-[20vh] xl:pb-[24vh] xl:pt-[clamp(66px,10vh,110px)]"
       >
-        <h1 className="giant-name pointer-events-none fixed left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.15rem,5.5vw,5.25rem)] font-black uppercase leading-none tracking-[-0.065em] text-[#0c0c0c] opacity-0 [perspective:1000px]">
+        <h1 className="giant-name pointer-events-none fixed left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2rem,8.6vw,3rem)] font-black uppercase leading-none tracking-[-0.065em] text-[#0c0c0c] opacity-0 [perspective:1000px] sm:text-[clamp(2.8rem,7vw,4.4rem)] xl:text-[clamp(2.15rem,5.5vw,5.25rem)]">
           <span className="giant-name-inner inline-block">Sahil Bhagat</span>
         </h1>
 
-        <div className="relative z-10 -ml-[11%] grid w-[122%] grid-cols-2 gap-x-[12vw] gap-y-[17vh] [grid-auto-rows:clamp(175px,34svh,260px)] md:grid-cols-5 md:gap-x-[5vw] md:gap-y-[16vh]">
+        <div className="relative z-10 -ml-[8%] grid w-[116%] grid-cols-2 gap-x-[10vw] gap-y-[14vh] [grid-auto-rows:clamp(175px,32svh,250px)] sm:-ml-[5%] sm:w-[110%] sm:gap-x-[8vw] md:grid-cols-3 md:gap-x-[7vw] md:gap-y-[14vh] md:[grid-auto-rows:clamp(210px,28svh,310px)] lg:grid-cols-4 lg:gap-x-[5vw] lg:gap-y-[15vh] xl:-ml-[11%] xl:w-[122%] xl:grid-cols-5 xl:gap-y-[16vh] xl:[grid-auto-rows:clamp(175px,34svh,260px)]">
           {displayPhotos.map((photo, index) => (
             <Fragment key={`${photo.src}-${index}`}>
               {(index === 2 || index === 6) && (
-                <div className="hidden md:block" aria-hidden="true" />
+                <div className="hidden xl:block" aria-hidden="true" />
               )}
               <GalleryPhoto
                 photo={photo}
@@ -646,7 +669,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         </div>
       </section>
 
-      <footer className="relative z-20 flex items-center justify-between border-t border-black/10 px-5 py-5 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0c0c0c] md:px-10 md:py-7 md:text-xs">
+      <footer className="relative z-20 flex flex-wrap items-center justify-between gap-3 border-t border-black/10 px-[max(1.25rem,env(safe-area-inset-left))] py-5 pr-[max(1.25rem,env(safe-area-inset-right))] text-[9px] font-bold uppercase tracking-[0.1em] text-[#0c0c0c] sm:text-[10px] md:px-10 md:py-7 md:text-xs">
         <span>Sahil Bhagat — Photography</span>
         <Link href="/" className="transition-opacity hover:opacity-40">
           Portfolio →
