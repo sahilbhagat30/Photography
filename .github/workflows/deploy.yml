@@ -11,8 +11,8 @@ permissions:
   id-token: write
 
 env:
-  NEXT_PUBLIC_BASE_PATH: /Photography
-  NEXT_PUBLIC_SITE_URL: https://sahilbhagat30.github.io/Photography
+  NEXT_PUBLIC_BASE_PATH: /photography
+  NEXT_PUBLIC_SITE_URL: https://sahilbhagat30.github.io/photography
 
 concurrency:
   group: "pages"
