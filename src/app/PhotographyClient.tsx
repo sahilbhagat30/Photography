@@ -53,10 +53,12 @@ function mobileOffset(index: number) {
 function GalleryPhoto({
   photo,
   index,
+  isInitialBatch,
   onSelect,
 }: {
   photo: PhotoData;
   index: number;
+  isInitialBatch: boolean;
   onSelect: () => void;
 }) {
   const cellStyle = {
@@ -72,7 +74,7 @@ function GalleryPhoto({
       <button
         type="button"
         onClick={onSelect}
-        className={`deal-card group relative block overflow-hidden bg-black/5 opacity-0 ${cardSize(photo)}`}
+        className={`deal-card group relative block overflow-hidden bg-black/5 ${isInitialBatch ? "opacity-0 initial-card" : "opacity-100"} ${cardSize(photo)}`}
         style={{ aspectRatio: photoAspectRatio(photo) }}
         aria-label={`View ${photo.alt}`}
         data-cursor="View"
@@ -333,6 +335,7 @@ function FocusView({
 export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const [navOpen, setNavOpen] = useState(false);
+  const [multiplier, setMultiplier] = useState(1);
   const gridRef = useRef<HTMLElement>(null);
 
   const closeFocus = useCallback(() => setFocusIndex(null), []);
@@ -348,7 +351,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
     () => {
       if (!gridRef.current) return;
 
-      const cards = gsap.utils.toArray<HTMLElement>(".deal-card", gridRef.current);
+      const cards = gsap.utils.toArray<HTMLElement>(".initial-card", gridRef.current);
       const title = gridRef.current.querySelector<HTMLElement>(".giant-name");
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -423,6 +426,18 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [navOpen]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1500) {
+        setMultiplier((prev) => prev + 1);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const displayPhotos = Array.from({ length: multiplier }).flatMap(() => photos);
 
   return (
     <MotionConfig reducedMotion="user">
@@ -524,15 +539,16 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         </h1>
 
         <div className="relative z-10 -ml-[11%] grid w-[122%] grid-cols-2 gap-x-[12vw] gap-y-[17vh] [grid-auto-rows:clamp(175px,34svh,260px)] md:grid-cols-5 md:gap-x-[5vw] md:gap-y-[16vh]">
-          {photos.map((photo, index) => (
-            <Fragment key={photo.src}>
+          {displayPhotos.map((photo, index) => (
+            <Fragment key={`${photo.src}-${index}`}>
               {(index === 2 || index === 6) && (
                 <div className="hidden md:block" aria-hidden="true" />
               )}
               <GalleryPhoto
                 photo={photo}
                 index={index}
-                onSelect={() => setFocusIndex(index)}
+                isInitialBatch={index < photos.length}
+                onSelect={() => setFocusIndex(index % photos.length)}
               />
             </Fragment>
           ))}
