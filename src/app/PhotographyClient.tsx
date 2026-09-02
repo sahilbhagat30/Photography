@@ -17,10 +17,13 @@ import {
   type PanInfo,
 } from "framer-motion";
 import gsap from "gsap";
+import { CustomEase } from "gsap/CustomEase";
 import { useGSAP } from "@gsap/react";
 import Image from "next/image";
 import Link from "next/link";
 import type { PhotoData } from "@/utils/getPhotos";
+
+gsap.registerPlugin(CustomEase);
 
 const EASE = [0.77, 0, 0.175, 1] as const;
 const APPLE_SPRING = { type: "spring", bounce: 0, duration: 0.4 } as const;
@@ -357,16 +360,15 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
 
       const cards = gsap.utils.toArray<HTMLElement>(".initial-card", gridRef.current);
       const title = gridRef.current.querySelector<HTMLElement>(".giant-name");
+      const titleInner = gridRef.current.querySelector<HTMLElement>(".giant-name-inner");
       const menuTrigger = document.querySelector<HTMLElement>(".menu-trigger");
       const intro = introRef.current;
-      const introPhotos = intro
-        ? gsap.utils.toArray<HTMLElement>(".intro-photo", intro)
-        : [];
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       if (reduceMotion) {
         gsap.set(cards, { opacity: 1 });
         gsap.set(title, { opacity: 1 });
+        gsap.set(titleInner, { opacity: 1 });
         gsap.set(menuTrigger, { opacity: 1 });
         gsap.set(intro, { display: "none" });
         setIntroVisible(false);
@@ -375,62 +377,86 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
 
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
+      const viewportCards = cards.filter((card) => {
+        const rect = card.getBoundingClientRect();
+        return rect.bottom > 0
+          && rect.top < window.innerHeight
+          && rect.right > 0
+          && rect.left < window.innerWidth;
+      });
+      const openingCards = viewportCards.length > 0
+        ? viewportCards
+        : cards.slice(0, Math.min(11, cards.length));
+      const openingSet = new Set(openingCards);
+      const deferredCards = cards.filter((card) => !openingSet.has(card));
+      const stageOrder = gsap.utils.shuffle([...openingCards]);
+      const spreadOrder = new Map(
+        gsap.utils.shuffle([...openingCards]).map((card, index) => [card, index + 1]),
+      );
+      const spreadEase = CustomEase.create(
+        "photography-reference-spread",
+        "M0,0 C0.77,0 0.175,1 1,1",
+      );
 
-      cards.forEach((card, index) => {
+      gsap.set(cards, { opacity: 0 });
+      openingCards.forEach((card) => {
         const rect = card.getBoundingClientRect();
         gsap.set(card, {
           x: centerX - (rect.left + rect.width / 2),
           y: centerY - (rect.top + rect.height / 2),
-          rotation: ((index % 7) - 3) * 1.25,
-          scale: 0.72,
-          opacity: 0,
-          filter: "blur(12px)",
-          zIndex: cards.length - index,
           willChange: "transform",
         });
       });
+      stageOrder.forEach((card, index) => {
+        gsap.set(card.parentElement, { zIndex: index + 1 });
+      });
 
-      gsap.set([title, menuTrigger], { opacity: 0 });
+      gsap.set([title, titleInner, menuTrigger], { opacity: 0 });
+      gsap.set(titleInner, {
+        yPercent: 50,
+        rotationX: -40,
+        filter: "blur(12px)",
+        transformOrigin: "center center",
+      });
 
-      const timeline = gsap.timeline({ delay: 0.28 });
+      const timeline = gsap.timeline({ delay: 0.3 });
       timeline
-        .to(intro, { opacity: 1, duration: 0.35, ease: "power2.out" }, 0)
-        .to(introPhotos, {
+        .to(intro, {
+          backgroundColor: "rgba(245, 243, 240, 0)",
+          backdropFilter: "blur(0px)",
+          duration: 0.49,
+          ease: "power1.inOut",
+        }, 0.1)
+        .set(intro, { display: "none" }, 0.6)
+        .set(stageOrder, { opacity: 1, stagger: 0.1 }, 0.1)
+        .set(title, { opacity: 1 }, 1)
+        .to(titleInner, {
+          yPercent: 0,
+          rotationX: 0,
           opacity: 1,
           filter: "blur(0px)",
-          scale: 1,
-          duration: 0.75,
-          stagger: 0.07,
-          ease: "power3.out",
-        }, 0.2)
-        .fromTo(
-          title,
-          { opacity: 0 },
-          { opacity: 1, duration: 0.7, ease: "power2.out" },
-          1.7,
-        )
-        .to(
-          cards,
-          {
-            x: 0,
-            y: 0,
-            rotation: 0,
-            scale: 1,
-            opacity: 1,
-            filter: "blur(0px)",
-            duration: 1.35,
-            stagger: 0.012,
-            ease: "expo.inOut",
-            onComplete: () => {
-              gsap.set(cards, { clearProps: "transform,zIndex,willChange,filter" });
-            },
+          duration: 0.79,
+          ease: spreadEase,
+        }, 1.6)
+        .to(menuTrigger, { opacity: 1, duration: 0.49, ease: spreadEase }, 1.6);
+
+      openingCards.forEach((card) => {
+        timeline.to(card, {
+          x: 0,
+          y: 0,
+          duration: gsap.utils.random(0.8, 1.4, 0.01),
+          ease: spreadEase,
+          onComplete: () => {
+            gsap.set(card, { clearProps: "transform,willChange" });
           },
-          0.82,
-        )
-        .to(intro, { opacity: 0, duration: 0.35, ease: "power2.out" }, 0.82)
-        .set(intro, { display: "none" }, 1.2)
-        .to(menuTrigger, { opacity: 1, duration: 0.45, ease: "power2.out" }, 1.55)
-        .call(() => setIntroVisible(false));
+        }, 1 + (spreadOrder.get(card) ?? 1) * 0.01);
+      });
+
+      timeline.call(() => {
+        gsap.set(deferredCards, { opacity: 1 });
+        gsap.set(openingCards.map((card) => card.parentElement), { clearProps: "zIndex" });
+        setIntroVisible(false);
+      });
 
       return () => timeline.kill();
     },
@@ -570,23 +596,21 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         )}
       </AnimatePresence>
 
-      {introVisible && <div ref={introRef} className="pointer-events-none fixed inset-0 z-[80] bg-[#f5f3f0] opacity-0" aria-hidden="true">
-        <div className="absolute left-1/2 top-1/2 h-[28vh] w-[19vh] -translate-x-1/2 -translate-y-1/2">
-          {photos.slice(0, 3).map((photo, index) => (
-            <div key={photo.src} className="intro-photo absolute inset-0 opacity-0 blur-xl" style={{ transform: `translate(${(index - 1) * 17}px, ${(index - 1) * -8}px) scale(.82)` }}>
-              <Image src={photo.src} alt="" fill sizes="20vw" className="object-cover" priority />
-            </div>
-          ))}
-        </div>
-      </div>}
+      {introVisible && (
+        <div
+          ref={introRef}
+          className="pointer-events-none fixed inset-0 z-[80] bg-[#f5f3f0] [backdrop-filter:blur(12px)]"
+          aria-hidden="true"
+        />
+      )}
 
       <section
         ref={gridRef}
         id="work"
         className="relative min-h-screen overflow-hidden pb-[24vh] pt-[clamp(66px,10vh,110px)]"
       >
-        <h1 className="giant-name pointer-events-none fixed left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.15rem,5.5vw,5.25rem)] font-black uppercase leading-none tracking-[-0.065em] text-[#0c0c0c] opacity-0">
-          Sahil Bhagat
+        <h1 className="giant-name pointer-events-none fixed left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.15rem,5.5vw,5.25rem)] font-black uppercase leading-none tracking-[-0.065em] text-[#0c0c0c] opacity-0 [perspective:1000px]">
+          <span className="giant-name-inner inline-block">Sahil Bhagat</span>
         </h1>
 
         <div className="relative z-10 -ml-[11%] grid w-[122%] grid-cols-2 gap-x-[12vw] gap-y-[17vh] [grid-auto-rows:clamp(175px,34svh,260px)] md:grid-cols-5 md:gap-x-[5vw] md:gap-y-[16vh]">
