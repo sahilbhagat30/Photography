@@ -2,9 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: "/Photography",
   images: {
     unoptimized: true,
+    qualities: [75, 85],
   },
 };
 

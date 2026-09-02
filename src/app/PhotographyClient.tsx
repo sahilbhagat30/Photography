@@ -86,7 +86,7 @@ function GalleryPhoto({
           sizes="(max-width: 767px) 52vw, 20vw"
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025] group-active:scale-[0.985] group-active:duration-100"
           quality={85}
-          loading={index < 8 ? "eager" : "lazy"}
+          loading={index < 12 ? "eager" : "lazy"}
         />
         <span className="absolute inset-0 bg-[#f5f3f0]/0 transition-colors duration-500 group-hover:bg-[#f5f3f0]/10" />
       </button>
@@ -337,6 +337,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
   const [navOpen, setNavOpen] = useState(false);
   const [multiplier, setMultiplier] = useState(1);
   const gridRef = useRef<HTMLElement>(null);
+  const introRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const closeFocus = useCallback(() => setFocusIndex(null), []);
@@ -354,11 +355,18 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
 
       const cards = gsap.utils.toArray<HTMLElement>(".initial-card", gridRef.current);
       const title = gridRef.current.querySelector<HTMLElement>(".giant-name");
+      const menuTrigger = document.querySelector<HTMLElement>(".menu-trigger");
+      const intro = introRef.current;
+      const introPhotos = intro
+        ? gsap.utils.toArray<HTMLElement>(".intro-photo", intro)
+        : [];
       const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       if (reduceMotion) {
         gsap.set(cards, { opacity: 1 });
         gsap.set(title, { opacity: 1 });
+        gsap.set(menuTrigger, { opacity: 1 });
+        gsap.set(intro, { display: "none" });
         return;
       }
 
@@ -371,20 +379,32 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
           x: centerX - (rect.left + rect.width / 2),
           y: centerY - (rect.top + rect.height / 2),
           rotation: ((index % 7) - 3) * 1.25,
-          scale: 0.92,
-          opacity: 1,
+          scale: 0.72,
+          opacity: 0,
+          filter: "blur(12px)",
           zIndex: cards.length - index,
           willChange: "transform",
         });
       });
 
-      const timeline = gsap.timeline({ delay: 0.12 });
+      gsap.set([title, menuTrigger], { opacity: 0 });
+
+      const timeline = gsap.timeline({ delay: 0.28 });
       timeline
+        .to(intro, { opacity: 1, duration: 0.35, ease: "power2.out" }, 0)
+        .to(introPhotos, {
+          opacity: 1,
+          filter: "blur(0px)",
+          scale: 1,
+          duration: 0.75,
+          stagger: 0.07,
+          ease: "power3.out",
+        }, 0.2)
         .fromTo(
           title,
-          { opacity: 0, scale: 0.96 },
-          { opacity: 1, scale: 1, duration: 0.85, ease: "power3.out" },
-          0.28,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.7, ease: "power2.out" },
+          1.7,
         )
         .to(
           cards,
@@ -393,15 +413,20 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
             y: 0,
             rotation: 0,
             scale: 1,
-            duration: 1.55,
-            stagger: 0.025,
-            ease: "power4.inOut",
+            opacity: 1,
+            filter: "blur(0px)",
+            duration: 1.35,
+            stagger: 0.035,
+            ease: "expo.inOut",
             onComplete: () => {
-              gsap.set(cards, { clearProps: "transform,zIndex,willChange" });
+              gsap.set(cards, { clearProps: "transform,zIndex,willChange,filter" });
             },
           },
-          0,
-        );
+          0.82,
+        )
+        .to(intro, { opacity: 0, duration: 0.35, ease: "power2.out" }, 0.82)
+        .set(intro, { display: "none" }, 1.2)
+        .to(menuTrigger, { opacity: 1, duration: 0.45, ease: "power2.out" }, 1.55);
 
       return () => timeline.kill();
     },
@@ -455,7 +480,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         onClick={() => setNavOpen((open) => !open)}
         whileTap={{ scale: 0.88 }}
         transition={PRESS_SPRING}
-        className="fixed left-1/2 top-4 z-[100] flex size-12 -translate-x-1/2 items-center justify-center text-[#0c0c0c] md:top-5"
+        className="menu-trigger fixed left-1/2 top-2 z-[100] flex size-12 -translate-x-1/2 items-center justify-center text-[#0c0c0c] md:top-2"
         aria-label={navOpen ? "Close photography menu" : "Open photography menu"}
         aria-expanded={navOpen}
         aria-controls="photography-menu"
@@ -480,66 +505,65 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.985, y: -10 }}
             transition={APPLE_SPRING}
-            className="photography-material fixed inset-0 z-[90] overflow-y-auto text-[#0c0c0c]"
+            className="photography-material fixed inset-0 z-[90] overflow-hidden text-[#0c0c0c]"
             style={{ transformOrigin: "50% 2.75rem" }}
             role="dialog"
             aria-modal="true"
             aria-label="Photography information and navigation"
           >
-            <div className="mx-auto flex min-h-full w-full max-w-[1600px] flex-col px-5 pb-7 pt-28 md:px-10 md:pb-10 md:pt-32">
+            <div className="mx-auto flex min-h-full w-full flex-col px-5 pb-5 pt-20 md:px-6 md:pb-4 md:pt-[5.5rem]">
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...APPLE_SPRING, delay: 0.1 }}
-                className="grid gap-6 border-t border-black/15 pt-5 md:grid-cols-12 md:gap-8 md:pt-7"
+                className="flex min-h-0 flex-1 flex-col items-center text-center"
               >
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] md:col-span-3 md:text-xs">
-                  Beyond the screen
+                <nav className="text-[clamp(2.65rem,5vw,4.8rem)] font-black uppercase leading-[0.9] tracking-[-0.065em]" aria-label="Photography navigation">
+                  <button onClick={() => setNavOpen(false)} className="block uppercase transition-opacity hover:opacity-35">Overview</button>
+                  <a href="#work" onClick={() => setNavOpen(false)} className="block uppercase transition-opacity hover:opacity-35">Work</a>
+                </nav>
+                <p className="my-auto max-w-[1220px] text-[clamp(1.45rem,3.3vw,3.15rem)] font-black uppercase leading-[1.03] tracking-[-0.055em]">
+                  Sahil Bhagat is a data engineer and visual storyteller based in New York. His photographs follow quiet weather, city rhythms, and the small details that make a place feel lived in.
                 </p>
-                <div className="md:col-span-8 md:col-start-5">
-                  <h2 className="text-[clamp(3rem,8vw,8.5rem)] font-black uppercase leading-[0.82] tracking-[-0.075em]">
-                    Through<br />My Lens
-                  </h2>
-                  <p className="mt-8 max-w-xl text-base leading-relaxed text-black/65 md:mt-12 md:text-xl">
-                    Sahil Bhagat is a data engineer and visual storyteller based
-                    in New York. His photographs follow quiet weather, city
-                    rhythms, and the small details that make a place feel lived
-                    in.
-                  </p>
-                </div>
               </motion.div>
 
-              <motion.nav
+              <motion.div
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...APPLE_SPRING, delay: 0.16 }}
-                className="mt-auto grid gap-3 border-t border-black/15 pt-5 md:grid-cols-2 md:gap-8 md:pt-7"
-                aria-label="Photography navigation"
+                className="grid grid-cols-[1fr_auto] items-end gap-4"
               >
                 <a
                   href="mailto:sahilbhagat1497@gmail.com"
-                  className="group flex items-end justify-between border-b border-black/15 py-3 text-2xl font-black uppercase tracking-[-0.055em] transition-opacity hover:opacity-40 active:opacity-40 md:border-b-0 md:py-0 md:text-[clamp(2.5rem,5vw,5.5rem)]"
+                  className="text-left text-[clamp(1.7rem,3.4vw,3.7rem)] font-black uppercase leading-none tracking-[-0.06em] transition-opacity hover:opacity-35"
                   data-cursor="hover"
                 >
                   Contact me
-                  <span className="pb-1 text-sm font-medium tracking-normal md:pb-3 md:text-xl">↗</span>
                 </a>
-                <Link
-                  href="/"
-                  className="group flex items-end justify-between py-3 text-2xl font-black uppercase tracking-[-0.055em] transition-opacity hover:opacity-40 active:opacity-40 md:py-0 md:text-[clamp(2.5rem,5vw,5.5rem)]"
-                  data-cursor="hover"
-                >
-                  Back to portfolio
-                  <span className="pb-1 text-sm font-medium tracking-normal md:pb-3 md:text-xl">←</span>
-                </Link>
-              </motion.nav>
+                <div className="flex gap-6 text-[clamp(1.7rem,3.4vw,3.7rem)] font-black uppercase leading-none tracking-[-0.06em]">
+                  <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" className="transition-opacity hover:opacity-35">IN</a>
+                  <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" className="transition-opacity hover:opacity-35">LI</a>
+                </div>
+                <span className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 text-[10px] font-semibold uppercase md:text-xs">© Copyright 2026 — all rights reserved</span>
+              </motion.div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      <div ref={introRef} className="pointer-events-none fixed inset-0 z-[80] bg-[#f5f3f0] opacity-0" aria-hidden="true">
+        <div className="absolute left-1/2 top-1/2 h-[28vh] w-[19vh] -translate-x-1/2 -translate-y-1/2">
+          {photos.slice(0, 3).map((photo, index) => (
+            <div key={photo.src} className="intro-photo absolute inset-0 opacity-0 blur-xl" style={{ transform: `translate(${(index - 1) * 17}px, ${(index - 1) * -8}px) scale(.82)` }}>
+              <Image src={photo.src} alt="" fill sizes="20vw" className="object-cover" priority />
+            </div>
+          ))}
+        </div>
+      </div>
+
       <section
         ref={gridRef}
+        id="work"
         className="relative min-h-screen overflow-hidden pb-[24vh] pt-[clamp(66px,10vh,110px)]"
       >
         <h1 className="giant-name pointer-events-none fixed left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.15rem,5.5vw,5.25rem)] font-black uppercase leading-none tracking-[-0.065em] text-[#0c0c0c] opacity-0">
@@ -555,7 +579,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
               <GalleryPhoto
                 photo={photo}
                 index={index}
-                isInitialBatch={index < photos.length}
+                isInitialBatch={index < Math.min(12, photos.length)}
                 onSelect={() => setFocusIndex(index % photos.length)}
               />
             </Fragment>

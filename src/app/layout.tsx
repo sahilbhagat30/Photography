@@ -1,27 +1,21 @@
 import type { Metadata } from "next";
-import { Lexend, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import Cursor from "@/components/Cursor";
 import LenisProvider from "@/components/LenisProvider";
 
-const lexend = Lexend({ subsets: ["latin"], variable: "--font-lexend", weight: ["300","400","500","600","700","800","900"] });
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", weight: ["400", "500", "600", "700", "800", "900"], style: ["normal", "italic"] });
-
 export const metadata: Metadata = {
-  title: "Sahil Bhagat",
-  description: "Data Engineer & Analytics Professional specializing in cloud infrastructure, BI, and data pipelines.",
+  title: "Sahil Bhagat — Photography",
+  description: "Quiet weather, city rhythms, and lived-in moments photographed by Sahil Bhagat.",
   metadataBase: new URL("https://sahilbhagat30.github.io"),
   openGraph: {
-    title: "Sahil Bhagat",
-    description: "Data Engineer & Analytics Professional specializing in cloud infrastructure, BI, and data pipelines.",
+    title: "Sahil Bhagat — Photography",
+    description: "Quiet weather, city rhythms, and lived-in moments photographed by Sahil Bhagat.",
     url: "https://sahilbhagat30.github.io",
     siteName: "Sahil Bhagat",
     locale: "en_US",
     type: "website",
   },
   icons: {
-    icon: "/icon.png",
-    apple: "/apple-icon.png",
+    icon: "/favicon.ico",
   },
 };
 
@@ -31,10 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${lexend.variable} ${playfair.variable} h-full antialiased`}>
+    <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col font-sans text-foreground bg-background">
-        {/* Custom cursor — above everything */}
-        <Cursor />
         <LenisProvider>{children}</LenisProvider>
       </body>
     </html>
