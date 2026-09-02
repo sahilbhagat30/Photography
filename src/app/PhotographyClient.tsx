@@ -354,6 +354,22 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
     });
   }, [photos.length]);
 
+  useLayoutEffect(() => {
+    const previousScrollRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
+
+    const resetScroll = () => window.scrollTo(0, 0);
+    resetScroll();
+    const frame = requestAnimationFrame(resetScroll);
+    window.addEventListener("pageshow", resetScroll);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("pageshow", resetScroll);
+      window.history.scrollRestoration = previousScrollRestoration;
+    };
+  }, []);
+
   useGSAP(
     () => {
       if (!gridRef.current) return;
