@@ -9,6 +9,8 @@ export interface PhotoData {
   height: number;
 }
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 export async function getPhotos(): Promise<PhotoData[]> {
   const baseDir = path.join(process.cwd(), "public", "photos");
   const metaPath = path.join(baseDir, "meta.json");
@@ -43,7 +45,7 @@ export async function getPhotos(): Promise<PhotoData[]> {
     }
 
     return {
-      src: `/photos/${file}`,
+      src: `${basePath}/photos/${file}`,
       alt: metadata[file] || "A captured moment",
       width,
       height,

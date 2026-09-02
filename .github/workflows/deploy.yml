@@ -10,6 +10,10 @@ permissions:
   pages: write
   id-token: write
 
+env:
+  NEXT_PUBLIC_BASE_PATH: /photography
+  NEXT_PUBLIC_SITE_URL: https://sahilbhagat30.github.io/photography
+
 concurrency:
   group: "pages"
   cancel-in-progress: false
