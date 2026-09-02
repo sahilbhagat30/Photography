@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import LenisProvider from "@/components/LenisProvider";
 
 export const metadata: Metadata = {
   title: "Sahil Bhagat — Photography",
@@ -27,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col font-sans text-foreground bg-background">
-        <LenisProvider>{children}</LenisProvider>
+        {children}
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import {
   Fragment,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
@@ -335,7 +336,7 @@ function FocusView({
 export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const [navOpen, setNavOpen] = useState(false);
-  const [multiplier, setMultiplier] = useState(2);
+  const [multiplier, setMultiplier] = useState(1);
   const [introVisible, setIntroVisible] = useState(true);
   const gridRef = useRef<HTMLElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
@@ -418,7 +419,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
             opacity: 1,
             filter: "blur(0px)",
             duration: 1.35,
-            stagger: 0.035,
+            stagger: 0.012,
             ease: "expo.inOut",
             onComplete: () => {
               gsap.set(cards, { clearProps: "transform,zIndex,willChange,filter" });
@@ -436,14 +437,16 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
     { scope: gridRef },
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const previousOverflow = document.body.style.overflow;
-    if (focusIndex !== null || navOpen) document.body.style.overflow = "hidden";
+    if (focusIndex !== null || navOpen || introVisible) {
+      document.body.style.overflow = "hidden";
+    }
 
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [focusIndex, navOpen]);
+  }, [focusIndex, introVisible, navOpen]);
 
   useEffect(() => {
     if (!navOpen) return;
@@ -457,6 +460,8 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
   }, [navOpen]);
 
   useEffect(() => {
+    if (introVisible) return;
+
     loadingMoreRef.current = false;
     let frame = 0;
 
@@ -482,7 +487,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
       window.removeEventListener("scroll", appendWhenNeeded);
       window.removeEventListener("resize", appendWhenNeeded);
     };
-  }, [multiplier]);
+  }, [introVisible, multiplier]);
 
   const displayPhotos = Array.from({ length: multiplier }).flatMap(() => photos);
 
@@ -593,7 +598,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
               <GalleryPhoto
                 photo={photo}
                 index={index}
-                isInitialBatch={index < Math.min(12, photos.length)}
+                isInitialBatch={index < photos.length}
                 onSelect={() => setFocusIndex(index % photos.length)}
               />
             </Fragment>
