@@ -337,6 +337,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
   const [navOpen, setNavOpen] = useState(false);
   const [multiplier, setMultiplier] = useState(1);
   const gridRef = useRef<HTMLElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const closeFocus = useCallback(() => setFocusIndex(null), []);
   const selectPhoto = useCallback((index: number) => setFocusIndex(index), []);
@@ -428,13 +429,20 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
   }, [navOpen]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1500) {
-        setMultiplier((prev) => prev + 1);
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    if (!bottomRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setMultiplier((prev) => prev + 1);
+        }
+      },
+      { rootMargin: "3500px 0px" }
+    );
+
+    observer.observe(bottomRef.current);
+
+    return () => observer.disconnect();
   }, []);
 
   const displayPhotos = Array.from({ length: multiplier }).flatMap(() => photos);
@@ -553,6 +561,8 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
             </Fragment>
           ))}
         </div>
+        
+        <div ref={bottomRef} className="absolute bottom-0 h-1 w-full" aria-hidden="true" />
       </section>
 
       <footer className="relative z-20 flex items-center justify-between border-t border-black/10 px-5 py-5 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0c0c0c] md:px-10 md:py-7 md:text-xs">
