@@ -335,10 +335,11 @@ function FocusView({
 export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
   const [focusIndex, setFocusIndex] = useState<number | null>(null);
   const [navOpen, setNavOpen] = useState(false);
-  const [multiplier, setMultiplier] = useState(1);
+  const [multiplier, setMultiplier] = useState(2);
+  const [introVisible, setIntroVisible] = useState(true);
   const gridRef = useRef<HTMLElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const loadingMoreRef = useRef(false);
 
   const closeFocus = useCallback(() => setFocusIndex(null), []);
   const selectPhoto = useCallback((index: number) => setFocusIndex(index), []);
@@ -367,6 +368,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         gsap.set(title, { opacity: 1 });
         gsap.set(menuTrigger, { opacity: 1 });
         gsap.set(intro, { display: "none" });
+        setIntroVisible(false);
         return;
       }
 
@@ -426,7 +428,8 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         )
         .to(intro, { opacity: 0, duration: 0.35, ease: "power2.out" }, 0.82)
         .set(intro, { display: "none" }, 1.2)
-        .to(menuTrigger, { opacity: 1, duration: 0.45, ease: "power2.out" }, 1.55);
+        .to(menuTrigger, { opacity: 1, duration: 0.45, ease: "power2.out" }, 1.55)
+        .call(() => setIntroVisible(false));
 
       return () => timeline.kill();
     },
@@ -454,21 +457,32 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
   }, [navOpen]);
 
   useEffect(() => {
-    if (!bottomRef.current) return;
+    loadingMoreRef.current = false;
+    let frame = 0;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setMultiplier((prev) => prev + 1);
+    const appendWhenNeeded = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const remaining = document.documentElement.scrollHeight
+          - (window.scrollY + window.innerHeight);
+
+        if (remaining < window.innerHeight * 3 && !loadingMoreRef.current) {
+          loadingMoreRef.current = true;
+          setMultiplier((current) => current + 1);
         }
-      },
-      { rootMargin: "3500px 0px" }
-    );
+      });
+    };
 
-    observer.observe(bottomRef.current);
+    window.addEventListener("scroll", appendWhenNeeded, { passive: true });
+    window.addEventListener("resize", appendWhenNeeded);
+    appendWhenNeeded();
 
-    return () => observer.disconnect();
-  }, []);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", appendWhenNeeded);
+      window.removeEventListener("resize", appendWhenNeeded);
+    };
+  }, [multiplier]);
 
   const displayPhotos = Array.from({ length: multiplier }).flatMap(() => photos);
 
@@ -551,7 +565,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         )}
       </AnimatePresence>
 
-      <div ref={introRef} className="pointer-events-none fixed inset-0 z-[80] bg-[#f5f3f0] opacity-0" aria-hidden="true">
+      {introVisible && <div ref={introRef} className="pointer-events-none fixed inset-0 z-[80] bg-[#f5f3f0] opacity-0" aria-hidden="true">
         <div className="absolute left-1/2 top-1/2 h-[28vh] w-[19vh] -translate-x-1/2 -translate-y-1/2">
           {photos.slice(0, 3).map((photo, index) => (
             <div key={photo.src} className="intro-photo absolute inset-0 opacity-0 blur-xl" style={{ transform: `translate(${(index - 1) * 17}px, ${(index - 1) * -8}px) scale(.82)` }}>
@@ -559,7 +573,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
             </div>
           ))}
         </div>
-      </div>
+      </div>}
 
       <section
         ref={gridRef}
@@ -585,8 +599,6 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
             </Fragment>
           ))}
         </div>
-        
-        <div ref={bottomRef} className="absolute bottom-0 h-1 w-full" aria-hidden="true" />
       </section>
 
       <footer className="relative z-20 flex items-center justify-between border-t border-black/10 px-5 py-5 text-[10px] font-bold uppercase tracking-[0.12em] text-[#0c0c0c] md:px-10 md:py-7 md:text-xs">
