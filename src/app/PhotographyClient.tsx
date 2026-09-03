@@ -256,7 +256,7 @@ function FocusView({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.995 }}
       transition={APPLE_SPRING}
-      className="fixed inset-0 z-[110] h-[100dvh] bg-[#f5f3f0] text-[#0c0c0c]"
+      className="fixed inset-0 z-[110] bg-white text-[#0c0c0c]"
       role="dialog"
       aria-modal="true"
       aria-label={`Viewing ${photo.alt}`}
@@ -503,18 +503,10 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         const xPos = (clientX / window.innerWidth - 0.5) * 40;
         const yPos = (clientY / window.innerHeight - 0.5) * 40;
         
-        // Calculate 3D tilt angles based on mouse position
-        const rotateY = (clientX / window.innerWidth - 0.5) * 12; 
-        const rotateX = -(clientY / window.innerHeight - 0.5) * 12;
-        
         if (gridContainer) {
           gsap.to(gridContainer, {
             x: -xPos,
             y: -yPos,
-            rotateX: rotateX,
-            rotateY: rotateY,
-            transformPerspective: 1200,
-            transformOrigin: "center center",
             duration: 1.5,
             ease: "power2.out",
             overwrite: "auto",
@@ -525,10 +517,6 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
           gsap.to(titleInner, {
             x: xPos * 0.5,
             y: yPos * 0.5,
-            rotateX: rotateX * -1.5,
-            rotateY: rotateY * -1.5,
-            transformPerspective: 1000,
-            transformOrigin: "center center",
             duration: 1.5,
             ease: "power2.out",
             overwrite: "auto",
