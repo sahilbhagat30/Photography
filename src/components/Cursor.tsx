@@ -3,18 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useSpring, useMotionValue } from "framer-motion";
 
-type CursorVariant = "default" | "hover" | "text" | "click" | "custom";
-
-type CursorAnimation = {
-  width: number;
-  height: number;
-  backgroundColor: string;
-  opacity: number;
-  borderColor?: string;
-  borderRadius?: string;
-  scale?: number;
-};
-
 export default function Cursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
@@ -25,7 +13,7 @@ export default function Cursor() {
   const ringX = useSpring(cursorX, ringConfig);
   const ringY = useSpring(cursorY, ringConfig);
 
-  const [variant, setVariant] = useState<CursorVariant>("default");
+  const [variant, setVariant] = useState<"default" | "hover" | "text" | "click" | "custom">("default");
   const [customText, setCustomText] = useState("");
   const [isVisible, setIsVisible] = useState(false);
 
@@ -97,7 +85,7 @@ export default function Cursor() {
     };
   }, [cursorX, cursorY]);
 
-  const dotVariants: Record<CursorVariant, CursorAnimation> = {
+  const dotVariants: Record<string, any> = {
     default: { width: 8,  height: 8,  backgroundColor: "#e5e7eb", opacity: 1 },
     hover:   { width: 12, height: 12, backgroundColor: "#ffffff", opacity: 1 },
     text:    { width: 4,  height: 24, backgroundColor: "#e5e7eb", borderRadius: "2px", opacity: 0.8 },
@@ -105,7 +93,7 @@ export default function Cursor() {
     custom:  { width: 0,  height: 0,  backgroundColor: "rgba(255,255,255,0)", opacity: 0 },
   };
 
-  const ringVariants: Record<CursorVariant, CursorAnimation> = {
+  const ringVariants: Record<string, any> = {
     default: { width: 36, height: 36, borderColor: "rgba(229,231,235,0.4)", backgroundColor: "rgba(3,5,15,0.35)", opacity: isVisible ? 1 : 0, scale: 1 },
     hover:   { width: 56, height: 56, borderColor: "rgba(255,255,255,0.5)", backgroundColor: "rgba(3,5,15,0.45)", opacity: isVisible ? 1 : 0, scale: 1 },
     text:    { width: 40, height: 40, borderColor: "rgba(234,230,225,0.4)", backgroundColor: "rgba(3,5,15,0.3)", opacity: isVisible ? 0.6 : 0, scale: 1 },
