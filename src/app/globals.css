@@ -328,6 +328,268 @@ body::after {
   background: #f5f3f0;
 }
 
+.portfolio-shell {
+  --photography-cubic: cubic-bezier(0.77, 0, 0.175, 1);
+  background: #f5f3f0;
+  color: #0c0c0c;
+}
+
+.portfolio-shell .deal-card {
+  transition:
+    opacity 0.49s var(--photography-cubic),
+    filter 0.49s var(--photography-cubic),
+    box-shadow 0.49s var(--photography-cubic);
+}
+
+.portfolio-shell.is-project-hovering .deal-card {
+  opacity: 0.24;
+  filter: blur(0.5px) grayscale(0.2);
+}
+
+.portfolio-shell.is-project-hovering .deal-card.js-project--ishovering {
+  opacity: 1;
+  filter: blur(0) grayscale(0);
+  box-shadow: 0 28px 70px rgba(12, 12, 12, 0.16);
+}
+
+.portfolio-shell .deal-card.js-project--isleaving {
+  transition:
+    opacity 0.5s var(--photography-cubic),
+    filter 0.5s var(--photography-cubic),
+    box-shadow 0.5s var(--photography-cubic);
+}
+
+.portfolio-shell.is-project-hovering .giant-name {
+  opacity: 0.08 !important;
+  filter: blur(8px);
+  transition:
+    opacity 0.49s var(--photography-cubic),
+    filter 0.49s var(--photography-cubic);
+}
+
+.portfolio-shell[data-view="list"] .giant-name {
+  opacity: 0 !important;
+  filter: blur(12px);
+}
+
+.c-element-projects {
+  --project-cubic: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.c-element-projects.view--grid .c-element-projects__list {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  z-index: 30;
+  width: 92vw;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  text-align: center;
+}
+
+.c-element-projects.view--grid .project-list-item {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: min(92vw, 1440px);
+  transform: translate(-50%, -50%);
+  perspective: 1000px;
+}
+
+.c-element-projects.view--grid .project-name {
+  display: inline-block;
+  max-width: 100%;
+  transform: translateY(50%) rotateX(-90deg);
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  opacity: 0;
+  filter: blur(12px);
+  font-size: clamp(2.1rem, 7vw, 6.25rem);
+  font-weight: 900;
+  line-height: 0.86;
+  letter-spacing: -0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.c-element-projects.view--grid .project-list-item.js-project--ishovering .project-name {
+  transform: none;
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    transform 0.79s var(--project-cubic),
+    opacity 0.79s var(--project-cubic),
+    filter 0.79s var(--project-cubic);
+}
+
+.c-element-projects.view--grid .project-list-item.js-project--isleaving .project-name {
+  transform: translateY(-50%) rotateX(90deg);
+  opacity: 0;
+  filter: blur(12px);
+  transition:
+    transform 0.79s var(--project-cubic),
+    opacity 0.79s var(--project-cubic),
+    filter 0.79s var(--project-cubic);
+}
+
+.c-element-projects.view--list .c-element-projects__grid {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.c-element-projects.view--list .project-grid-item {
+  position: absolute;
+  top: 50%;
+  left: clamp(1.5rem, 7vw, 10rem);
+  width: min(24vw, 430px);
+  height: min(24vw, 430px);
+  transform: translateY(-50%);
+  opacity: 0;
+  filter: blur(12px);
+}
+
+.c-element-projects.view--list .project-grid-item:nth-child(even) {
+  right: clamp(1.5rem, 7vw, 10rem);
+  left: auto;
+}
+
+.c-element-projects.view--list .project-grid-item.js-project--ishovering {
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity 0.49s ease,
+    filter 0.49s ease;
+}
+
+.c-element-projects.view--list .project-grid-item.js-project--isleaving {
+  opacity: 0;
+  filter: blur(12px);
+  transition:
+    opacity 0.49s ease,
+    filter 0.49s ease;
+}
+
+.c-element-projects.view--list .project-list-item {
+  max-width: min(95vw, 1500px);
+  border-bottom: 3px solid transparent;
+  perspective: 1000px;
+  transition:
+    border-color 0.25s ease,
+    opacity 0.49s var(--project-cubic);
+}
+
+.c-element-projects.view--list .project-list-item:hover,
+.c-element-projects.view--list .project-list-item:focus-visible,
+.c-element-projects.view--list .project-list-item.js-project--ishovering {
+  border-color: #0c0c0c;
+}
+
+.c-element-projects.view--list .project-name {
+  display: inline-block;
+  transform: translateY(50%) rotateX(-90deg);
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  opacity: 0;
+  font-size: clamp(2.15rem, 8.7vw, 9.5rem);
+  font-weight: 900;
+  line-height: 0.84;
+  letter-spacing: -0.075em;
+  text-transform: uppercase;
+}
+
+.portfolio-shell.is-loaded .c-element-projects.view--list .project-name {
+  transform: none;
+  opacity: 1;
+  transition:
+    transform 0.79s var(--project-cubic),
+    opacity 0.79s var(--project-cubic);
+  transition-delay: var(--project-delay, 0s);
+}
+
+.portfolio-shell.is-project-hovering .c-element-projects.view--list .project-list-item:not(.js-project--ishovering) {
+  opacity: 0.18;
+}
+
+.photography-project-switch {
+  position: fixed;
+  left: 50%;
+  bottom: max(0.85rem, env(safe-area-inset-bottom));
+  z-index: 75;
+  display: flex;
+  gap: clamp(1.1rem, 3.5vw, 2.4rem);
+  transform: translateX(-50%);
+  perspective: 1000px;
+  transition:
+    opacity 0.49s var(--photography-cubic),
+    filter 0.49s var(--photography-cubic),
+    transform 0.49s var(--photography-cubic);
+}
+
+.photography-project-switch.is-hidden {
+  pointer-events: none;
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateX(-50%) translateY(10px);
+}
+
+.photography-project-switch button {
+  border-bottom: 2px solid transparent;
+  color: #0c0c0c;
+  cursor: pointer;
+  font-size: clamp(1rem, 2.3vw, 1.55rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+  transition:
+    border-color 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.photography-project-switch button:hover,
+.photography-project-switch button.is--active {
+  border-color: #0c0c0c;
+}
+
+.photography-project-switch button:not(.is--active) {
+  opacity: 0.45;
+}
+
+@media only screen and (max-width: 768px) {
+  .c-element-projects.view--grid .c-element-projects__list,
+  .c-element-projects.view--list .c-element-projects__grid {
+    display: none;
+  }
+
+  .portfolio-shell.is-project-hovering .deal-card {
+    opacity: 1;
+    filter: none;
+  }
+
+  .portfolio-shell.is-project-hovering .giant-name {
+    opacity: 1 !important;
+    filter: none;
+  }
+
+  .c-element-projects.view--list .project-list-item {
+    max-width: 96vw;
+    border-bottom-width: 2px;
+  }
+
+  .c-element-projects.view--list .project-name {
+    font-size: clamp(2.4rem, 15vw, 4.8rem);
+    line-height: 0.9;
+    white-space: normal;
+  }
+
+  .photography-project-switch {
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+    gap: 1.15rem;
+  }
+}
+
 /* ─── Apple Design: Reduced Motion Fallbacks ─────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
