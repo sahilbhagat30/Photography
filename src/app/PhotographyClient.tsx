@@ -40,7 +40,7 @@ function photoAspectRatio(photo: PhotoData) {
 function cardSize(photo: PhotoData) {
   return photo.width >= photo.height
     ? "w-full max-h-full"
-    : "h-[112%] max-w-full";
+    : "w-full h-auto landscape:w-auto landscape:h-[112%] max-w-full";
 }
 
 function desktopOffset(index: number) {
@@ -71,19 +71,17 @@ function GalleryPhoto({
 }) {
   const cellStyle = {
     "--desktop-offset": desktopOffset(index),
-    "--mobile-offset": mobileOffset(index),
-    "--tablet-offset": tabletOffset(index),
   } as CSSProperties;
 
   return (
     <div
-      className="flex h-full items-start justify-center [transform:translateY(var(--mobile-offset))] md:[transform:translateY(var(--tablet-offset))] xl:[transform:translateY(var(--desktop-offset))]"
+      className="flex h-full items-start justify-center [transform:translateY(var(--desktop-offset))]"
       style={cellStyle}
     >
       <button
         type="button"
         onClick={onSelect}
-        className={`deal-card group relative block overflow-hidden bg-black/5 ${isInitialBatch ? "opacity-0 initial-card" : "opacity-100"} ${cardSize(photo)}`}
+        className={`deal-card group relative block overflow-hidden bg-black/5 transition-opacity duration-500 group-has-[.deal-card:hover]/grid:opacity-40 hover:!opacity-100 ${isInitialBatch ? "opacity-0 initial-card" : "opacity-100"} ${cardSize(photo)}`}
         style={{ aspectRatio: photoAspectRatio(photo) }}
         aria-label={`View ${photo.alt}`}
         data-cursor="View"
@@ -92,7 +90,7 @@ function GalleryPhoto({
           src={photo.src}
           alt={photo.alt}
           fill
-          sizes="(max-width: 639px) 58vw, (max-width: 1023px) 38vw, (max-width: 1279px) 29vw, 20vw"
+          sizes="25vw"
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025] group-active:scale-[0.985] group-active:duration-100"
           quality={85}
           loading={index < 12 ? "eager" : "lazy"}
@@ -269,7 +267,7 @@ function FocusView({
         onClick={onClose}
         whileTap={{ scale: 0.88 }}
         transition={PRESS_SPRING}
-        className="absolute left-1/2 top-[max(0.5rem,env(safe-area-inset-top))] z-[130] flex size-12 -translate-x-1/2 items-center justify-center lg:top-3"
+        className="absolute left-1/2 top-[max(0.5rem,env(safe-area-inset-top))] z-[130] hidden size-12 -translate-x-1/2 items-center justify-center lg:flex lg:top-3"
         aria-label="Close photo"
         data-cursor="hover"
       >
@@ -331,7 +329,7 @@ function FocusView({
             onClick={onClose}
             whileTap={{ scale: 0.94 }}
             transition={PRESS_SPRING}
-            className="absolute bottom-2 left-1/2 -translate-x-1/2 text-base font-black uppercase tracking-[-0.04em] transition-opacity hover:opacity-40 lg:bottom-4 lg:text-2xl"
+            className="absolute left-6 top-[max(1.5rem,env(safe-area-inset-top))] z-[130] text-base font-black uppercase tracking-[-0.04em] transition-opacity hover:opacity-40 lg:bottom-4 lg:left-1/2 lg:top-auto lg:-translate-x-1/2 lg:text-2xl"
           >
             Back
           </motion.button>
@@ -492,6 +490,58 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
     { scope: gridRef },
   );
 
+  useGSAP(
+    () => {
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduceMotion || !gridRef.current) return;
+      
+      const titleInner = gridRef.current.querySelector<HTMLElement>(".giant-name-inner");
+      const gridContainer = gridRef.current.querySelector<HTMLElement>(".photo-grid-container");
+      
+      const handleMouseMove = (e: MouseEvent) => {
+        const { clientX, clientY } = e;
+        const xPos = (clientX / window.innerWidth - 0.5) * 40;
+        const yPos = (clientY / window.innerHeight - 0.5) * 40;
+        
+        // Calculate 3D tilt angles based on mouse position
+        const rotateY = (clientX / window.innerWidth - 0.5) * 12; 
+        const rotateX = -(clientY / window.innerHeight - 0.5) * 12;
+        
+        if (gridContainer) {
+          gsap.to(gridContainer, {
+            x: -xPos,
+            y: -yPos,
+            rotateX: rotateX,
+            rotateY: rotateY,
+            transformPerspective: 1200,
+            transformOrigin: "center center",
+            duration: 1.5,
+            ease: "power2.out",
+            overwrite: "auto",
+          });
+        }
+        
+        if (titleInner) {
+          gsap.to(titleInner, {
+            x: xPos * 0.5,
+            y: yPos * 0.5,
+            rotateX: rotateX * -1.5,
+            rotateY: rotateY * -1.5,
+            transformPerspective: 1000,
+            transformOrigin: "center center",
+            duration: 1.5,
+            ease: "power2.out",
+            overwrite: "auto",
+          });
+        }
+      };
+      
+      window.addEventListener("mousemove", handleMouseMove);
+      return () => window.removeEventListener("mousemove", handleMouseMove);
+    },
+    { scope: gridRef }
+  );
+
   useLayoutEffect(() => {
     const root = document.documentElement;
     const previousRootOverflow = root.style.overflow;
@@ -646,17 +696,17 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
       <section
         ref={gridRef}
         id="work"
-        className="relative min-h-screen overflow-hidden pb-[18vh] pt-[max(4.5rem,calc(env(safe-area-inset-top)+4rem))] sm:pb-[20vh] xl:pb-[24vh] xl:pt-[clamp(66px,10vh,110px)]"
+        className="relative min-h-screen overflow-hidden pb-[24vh] pt-[clamp(66px,10vh,110px)]"
       >
-        <h1 className="giant-name pointer-events-none fixed left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2rem,8.6vw,3rem)] font-black uppercase leading-none tracking-[-0.065em] text-[#0c0c0c] opacity-0 [perspective:1000px] sm:text-[clamp(2.8rem,7vw,4.4rem)] xl:text-[clamp(2.15rem,5.5vw,5.25rem)]">
+        <h1 className="giant-name pointer-events-none fixed left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.15rem,5.5vw,5.25rem)] font-black uppercase leading-none tracking-[-0.065em] text-[#0c0c0c] opacity-0 [perspective:1000px]">
           <span className="giant-name-inner inline-block">Sahil Bhagat</span>
         </h1>
 
-        <div className="relative z-10 -ml-[8%] grid w-[116%] grid-cols-2 gap-x-[10vw] gap-y-[14vh] [grid-auto-rows:clamp(175px,32svh,250px)] sm:-ml-[5%] sm:w-[110%] sm:gap-x-[8vw] md:grid-cols-3 md:gap-x-[7vw] md:gap-y-[14vh] md:[grid-auto-rows:clamp(210px,28svh,310px)] lg:grid-cols-4 lg:gap-x-[5vw] lg:gap-y-[15vh] xl:-ml-[11%] xl:w-[122%] xl:grid-cols-5 xl:gap-y-[16vh] xl:[grid-auto-rows:clamp(175px,34svh,260px)]">
+        <div className="photo-grid-container group/grid relative z-10 -ml-[11%] grid w-[122%] grid-cols-5 gap-x-[5vw] gap-y-[16vh] [grid-auto-rows:clamp(175px,34svh,260px)]">
           {displayPhotos.map((photo, index) => (
             <Fragment key={`${photo.src}-${index}`}>
               {(index === 2 || index === 6) && (
-                <div className="hidden xl:block" aria-hidden="true" />
+                <div aria-hidden="true" />
               )}
               <GalleryPhoto
                 photo={photo}
