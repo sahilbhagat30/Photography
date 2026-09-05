@@ -587,8 +587,8 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
 
         if (remaining < window.innerHeight * 3 && !loadingMoreRef.current) {
           loadingMoreRef.current = true;
-          // Cap the infinite scroll to 6 repetitions to prevent memory leaks
-          setMultiplier((current) => Math.min(current + 1, 6));
+          // Cap the infinite scroll to 12 repetitions to prevent memory leaks
+          setMultiplier((current) => Math.min(current + 1, 12));
         }
       });
     };
