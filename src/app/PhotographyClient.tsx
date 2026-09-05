@@ -92,7 +92,8 @@ function GalleryPhoto({
           fill
           sizes="25vw"
           className="deal-image object-cover transition-transform duration-700 ease-out group-active:scale-[0.985] group-active:duration-100"
-          loading={index < 12 ? "eager" : "lazy"}
+          loading={index < 20 ? "eager" : "lazy"}
+          placeholder="blur"
         />
         <span className="deal-overlay absolute inset-0 bg-[#f5f3f0]/0 transition-colors duration-500" />
       </button>
@@ -129,6 +130,7 @@ function Thumbnail({
         fill
         sizes="96px"
         className="object-cover"
+        placeholder="blur"
       />
     </button>
   );
@@ -315,6 +317,7 @@ function FocusView({
                   sizes="(max-width: 1023px) 100vw, calc(100vw - 180px)"
                   className="object-contain"
                   draggable={false}
+                  placeholder="blur"
                 />
               </motion.div>
             </AnimatePresence>
