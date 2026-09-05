@@ -723,7 +723,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
       </section>
 
       <footer className="relative z-20 flex flex-wrap items-center justify-between gap-3 border-t border-black/10 px-[max(1.25rem,env(safe-area-inset-left))] py-5 pr-[max(1.25rem,env(safe-area-inset-right))] text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#0c0c0c] sm:text-[10px] md:px-10 md:py-7 md:text-xs">
-        <span>Sahil Bhagat — Photography</span>
+        <span>Sahil Bhagat</span>
         <Link href="/" className="transition-opacity hover:opacity-40">
           Portfolio →
         </Link>

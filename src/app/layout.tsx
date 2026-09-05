@@ -5,11 +5,11 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahil-bhagat-photog
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const metadata: Metadata = {
-  title: "Sahil Bhagat — Photography",
+  title: "Sahil Bhagat",
   description: "Quiet weather, city rhythms, and lived-in moments photographed by Sahil Bhagat.",
   metadataBase: new URL(siteUrl),
   openGraph: {
-    title: "Sahil Bhagat — Photography",
+    title: "Sahil Bhagat",
     description: "Quiet weather, city rhythms, and lived-in moments photographed by Sahil Bhagat.",
     url: siteUrl,
     siteName: "Sahil Bhagat",

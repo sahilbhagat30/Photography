@@ -2,7 +2,7 @@ import { getPhotos } from "@/utils/getPhotos";
 import PhotographyClient from "./PhotographyClient";
 
 export const metadata = {
-  title: "Sahil Bhagat — Photography",
+  title: "Sahil Bhagat",
   description: "A collection of quiet moments, urban spaces, and geometry captured through my lens.",
 };
 
