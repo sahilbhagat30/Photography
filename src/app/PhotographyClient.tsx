@@ -462,28 +462,28 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
           ease: "power1.inOut",
         }, 0.1)
         .set(intro, { display: "none" }, 0.6)
-        .set(stageOrder, { opacity: 1, stagger: 0.1 }, 0.1)
-        .set(title, { opacity: 1 }, 1)
+        .set(stageOrder, { opacity: 1, stagger: 0.25 }, 0.1)
+        .set(title, { opacity: 1 }, 2.5)
         .to(titleInner, {
           yPercent: 0,
           rotationX: 0,
           opacity: 1,
           filter: "blur(0px)",
-          duration: 1.2,
+          duration: 0.79,
           ease: spreadEase,
-        }, 1.6)
-        .to(menuTrigger, { opacity: 1, duration: 0.8, ease: spreadEase }, 1.6);
+        }, 3.0)
+        .to(menuTrigger, { opacity: 1, duration: 0.49, ease: spreadEase }, 3.0);
 
       openingCards.forEach((card) => {
         timeline.to(card, {
           x: 0,
           y: 0,
-          duration: gsap.utils.random(2.4, 3.8, 0.01),
+          duration: gsap.utils.random(0.8, 1.4, 0.01),
           ease: spreadEase,
           onComplete: () => {
             gsap.set(card, { clearProps: "transform,willChange" });
           },
-        }, 1 + (spreadOrder.get(card) ?? 1) * 0.05);
+        }, 2.5 + (spreadOrder.get(card) ?? 1) * 0.01);
       });
 
       timeline.call(() => {
