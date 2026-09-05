@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Lexend } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const lexend = Lexend({
+const inter = Inter({
   subsets: ["latin"],
   display: "swap",
 });
@@ -34,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className={`min-h-full flex flex-col text-foreground bg-background ${lexend.className}`}>
+      <body className={`min-h-full flex flex-col text-foreground bg-background ${inter.className}`}>
         {children}
       </body>
     </html>
