@@ -81,7 +81,7 @@ function GalleryPhoto({
       <button
         type="button"
         onClick={onSelect}
-        className={`deal-card group relative block overflow-hidden bg-black/5 transition-opacity duration-500 group-has-[.deal-card:hover]/grid:opacity-40 hover:!opacity-100 ${isInitialBatch ? "opacity-0 initial-card" : "opacity-100"} ${cardSize(photo)}`}
+        className={`deal-card group relative block overflow-hidden bg-black/5 transition-opacity duration-500 ${isInitialBatch ? "opacity-0 initial-card" : "opacity-100"} ${cardSize(photo)}`}
         style={{ aspectRatio: photoAspectRatio(photo) }}
         aria-label={`View ${photo.alt}`}
         data-cursor="View"
@@ -91,11 +91,11 @@ function GalleryPhoto({
           alt={photo.alt}
           fill
           sizes="25vw"
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025] group-active:scale-[0.985] group-active:duration-100"
+          className="deal-image object-cover transition-transform duration-700 ease-out group-active:scale-[0.985] group-active:duration-100"
           quality={85}
           loading={index < 12 ? "eager" : "lazy"}
         />
-        <span className="absolute inset-0 bg-[#f5f3f0]/0 transition-colors duration-500 group-hover:bg-[#f5f3f0]/10" />
+        <span className="deal-overlay absolute inset-0 bg-[#f5f3f0]/0 transition-colors duration-500" />
       </button>
     </div>
   );
