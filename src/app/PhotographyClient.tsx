@@ -329,7 +329,7 @@ function FocusView({
             onClick={onClose}
             whileTap={{ scale: 0.94 }}
             transition={PRESS_SPRING}
-            className="absolute left-6 top-[max(1.5rem,env(safe-area-inset-top))] z-[130] text-base font-black uppercase tracking-[-0.04em] transition-opacity hover:opacity-40 lg:bottom-4 lg:left-1/2 lg:top-auto lg:-translate-x-1/2 lg:text-2xl"
+            className="absolute left-6 top-[max(1.5rem,env(safe-area-inset-top))] z-[130] text-base font-extrabold uppercase tracking-[-0.04em] transition-opacity hover:opacity-40 lg:bottom-4 lg:left-1/2 lg:top-auto lg:-translate-x-1/2 lg:text-2xl"
           >
             Back
           </motion.button>
@@ -640,11 +640,11 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
                 transition={{ ...APPLE_SPRING, delay: 0.1 }}
                 className="flex min-h-0 flex-1 flex-col items-center text-center"
               >
-                <nav className="text-[clamp(2.35rem,10vw,4.8rem)] font-black uppercase leading-[0.9] tracking-[-0.065em] sm:text-[clamp(3rem,7vw,4.8rem)] lg:text-[clamp(2.65rem,5vw,4.8rem)]" aria-label="Photography navigation">
+                <nav className="text-[clamp(2.35rem,10vw,4.8rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.065em] sm:text-[clamp(3rem,7vw,4.8rem)] lg:text-[clamp(2.65rem,5vw,4.8rem)]" aria-label="Photography navigation">
                   <button onClick={() => setNavOpen(false)} className="block uppercase transition-opacity hover:opacity-35">Overview</button>
                   <a href="#work" onClick={() => setNavOpen(false)} className="block uppercase transition-opacity hover:opacity-35">Work</a>
                 </nav>
-                <p className="my-auto max-w-[1220px] py-6 text-[clamp(1.05rem,5.2vw,1.7rem)] font-black uppercase leading-[1.03] tracking-[-0.055em] sm:text-[clamp(1.5rem,4vw,2.5rem)] lg:text-[clamp(1.45rem,3.3vw,3.15rem)]">
+                <p className="my-auto max-w-[1220px] py-6 text-[clamp(1.05rem,5.2vw,1.7rem)] font-extrabold uppercase leading-[1.03] tracking-[-0.055em] sm:text-[clamp(1.5rem,4vw,2.5rem)] lg:text-[clamp(1.45rem,3.3vw,3.15rem)]">
                   Sahil Bhagat is a data engineer and visual storyteller based in New York. His photographs follow quiet weather, city rhythms, and the small details that make a place feel lived in.
                 </p>
               </motion.div>
@@ -657,12 +657,12 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
               >
                 <a
                   href="mailto:sahilbhagat1497@gmail.com"
-                  className="text-left text-[clamp(1.35rem,6vw,2rem)] font-black uppercase leading-none tracking-[-0.06em] transition-opacity hover:opacity-35 sm:text-[clamp(1.8rem,4.5vw,3rem)] lg:text-[clamp(1.7rem,3.4vw,3.7rem)]"
+                  className="text-left text-[clamp(1.35rem,6vw,2rem)] font-extrabold uppercase leading-none tracking-[-0.06em] transition-opacity hover:opacity-35 sm:text-[clamp(1.8rem,4.5vw,3rem)] lg:text-[clamp(1.7rem,3.4vw,3.7rem)]"
                   data-cursor="hover"
                 >
                   Contact me
                 </a>
-                <div className="flex gap-4 text-[clamp(1.35rem,6vw,2rem)] font-black uppercase leading-none tracking-[-0.06em] sm:gap-6 sm:text-[clamp(1.8rem,4.5vw,3rem)] lg:text-[clamp(1.7rem,3.4vw,3.7rem)]">
+                <div className="flex gap-4 text-[clamp(1.35rem,6vw,2rem)] font-extrabold uppercase leading-none tracking-[-0.06em] sm:gap-6 sm:text-[clamp(1.8rem,4.5vw,3rem)] lg:text-[clamp(1.7rem,3.4vw,3.7rem)]">
                   <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" className="transition-opacity hover:opacity-35">IN</a>
                   <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" className="transition-opacity hover:opacity-35">LI</a>
                 </div>
@@ -686,7 +686,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         id="work"
         className="relative min-h-screen overflow-hidden pb-[24vh] pt-[clamp(66px,10vh,110px)]"
       >
-        <h1 className="giant-name pointer-events-none fixed left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.15rem,5.5vw,5.25rem)] font-black uppercase leading-none tracking-[-0.065em] text-[#0c0c0c] opacity-0 [perspective:1000px]">
+        <h1 className="giant-name pointer-events-none fixed left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.15rem,5.5vw,5.25rem)] font-extrabold uppercase leading-none tracking-[-0.065em] text-[#0c0c0c] opacity-0 [perspective:1000px]">
           <span className="giant-name-inner inline-block">Sahil Bhagat</span>
         </h1>
 
@@ -707,7 +707,7 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         </div>
       </section>
 
-      <footer className="relative z-20 flex flex-wrap items-center justify-between gap-3 border-t border-black/10 px-[max(1.25rem,env(safe-area-inset-left))] py-5 pr-[max(1.25rem,env(safe-area-inset-right))] text-[9px] font-bold uppercase tracking-[0.1em] text-[#0c0c0c] sm:text-[10px] md:px-10 md:py-7 md:text-xs">
+      <footer className="relative z-20 flex flex-wrap items-center justify-between gap-3 border-t border-black/10 px-[max(1.25rem,env(safe-area-inset-left))] py-5 pr-[max(1.25rem,env(safe-area-inset-right))] text-[9px] font-extrabold uppercase tracking-[0.1em] text-[#0c0c0c] sm:text-[10px] md:px-10 md:py-7 md:text-xs">
         <span>Sahil Bhagat — Photography</span>
         <Link href="/" className="transition-opacity hover:opacity-40">
           Portfolio →

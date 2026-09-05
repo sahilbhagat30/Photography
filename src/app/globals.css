@@ -47,7 +47,7 @@
                  radial-gradient(ellipse at bottom left, rgba(163, 163, 163, 0.04) 0%, transparent 60%);
 
   /* Typography */
-  --font-display: Arial, Helvetica, sans-serif;
+  --font-display: "Neue Rational", Helvetica;
   --font-serif: Georgia, serif;
 
   /* Shadows */
@@ -58,7 +58,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: Arial, Helvetica, sans-serif;
+  --font-sans: "Neue Rational", Helvetica;
   --font-serif: Georgia, serif;
 }
 
@@ -78,7 +78,8 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-display);
+  font-family: "Neue Rational", Helvetica;
+  font-weight: 800;
   /* NOTE: overflow-x on body breaks iOS touch scroll — DO NOT add it here.
      Horizontal overflow is contained at the html level with overflow-x: clip */
   -webkit-font-smoothing: antialiased;
