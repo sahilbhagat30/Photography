@@ -132,6 +132,7 @@ function Thumbnail({
         sizes="96px"
         className="object-cover"
         placeholder="blur"
+        priority={true}
       />
     </button>
   );
@@ -319,6 +320,7 @@ function FocusView({
                   className="object-contain"
                   draggable={false}
                   placeholder="blur"
+                  priority={true}
                 />
               </motion.div>
             </AnimatePresence>
