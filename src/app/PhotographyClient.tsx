@@ -212,7 +212,12 @@ function FocusView({
         ? window.innerHeight
         : 1;
 
-    wheelAccumulatorRef.current += event.deltaY * multiplier;
+    // Combine horizontal and vertical scroll deltas
+    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) 
+      ? event.deltaX 
+      : event.deltaY;
+
+    wheelAccumulatorRef.current += delta * multiplier;
 
     const stepThreshold = 100;
     const rawSteps = Math.trunc(wheelAccumulatorRef.current / stepThreshold);
@@ -237,12 +242,12 @@ function FocusView({
     _event: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo,
   ) => {
-    const projectedDistance = info.offset.y + projectMomentum(info.velocity.y);
+    const projectedDistance = info.offset.x + projectMomentum(info.velocity.x);
     if (Math.abs(projectedDistance) < 55) return;
 
-    const intent = Math.abs(info.velocity.y) > 120
-      ? info.velocity.y
-      : info.offset.y;
+    const intent = Math.abs(info.velocity.x) > 120
+      ? info.velocity.x
+      : info.offset.x;
     const steps = Math.max(
       1,
       Math.min(4, Math.round(Math.abs(projectedDistance) / 180)),
@@ -301,8 +306,8 @@ function FocusView({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.005 }}
                 transition={APPLE_SPRING}
-                drag="y"
-                dragConstraints={{ top: 0, bottom: 0 }}
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.18}
                 dragSnapToOrigin
                 dragTransition={{ bounceStiffness: 700, bounceDamping: 45 }}
