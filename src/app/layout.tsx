@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
+import { Lexend } from "next/font/google";
 import "./globals.css";
+
+const lexend = Lexend({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahil-bhagat-photography.ugk2102.chatgpt.site";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -28,7 +34,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col text-foreground bg-background">
+      <body className={`min-h-full flex flex-col text-foreground bg-background ${lexend.className}`}>
         {children}
       </body>
     </html>
