@@ -478,12 +478,12 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
         timeline.to(card, {
           x: 0,
           y: 0,
-          duration: gsap.utils.random(0.8, 1.4, 0.01),
+          duration: gsap.utils.random(1.4, 2.2, 0.01),
           ease: spreadEase,
           onComplete: () => {
             gsap.set(card, { clearProps: "transform,willChange" });
           },
-        }, 1 + (spreadOrder.get(card) ?? 1) * 0.01);
+        }, 1 + (spreadOrder.get(card) ?? 1) * 0.02);
       });
 
       timeline.call(() => {
