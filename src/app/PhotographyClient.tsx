@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -561,10 +562,14 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [navOpen]);
 
+  useLayoutEffect(() => {
+    // Unlock the ref safely *after* React has updated the DOM
+    loadingMoreRef.current = false;
+  }, [multiplier]);
+
   useEffect(() => {
     if (introVisible) return;
 
-    loadingMoreRef.current = false;
     let frame = 0;
 
     const appendWhenNeeded = () => {
@@ -575,7 +580,8 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
 
         if (remaining < window.innerHeight * 3 && !loadingMoreRef.current) {
           loadingMoreRef.current = true;
-          setMultiplier((current) => current + 1);
+          // Cap the infinite scroll to 6 repetitions to prevent memory leaks
+          setMultiplier((current) => Math.min(current + 1, 6));
         }
       });
     };
@@ -589,9 +595,12 @@ export default function PhotographyClient({ photos }: { photos: PhotoData[] }) {
       window.removeEventListener("scroll", appendWhenNeeded);
       window.removeEventListener("resize", appendWhenNeeded);
     };
-  }, [introVisible, multiplier]);
+  }, [introVisible]);
 
-  const displayPhotos = Array.from({ length: multiplier }).flatMap(() => photos);
+  const displayPhotos = useMemo(
+    () => Array.from({ length: multiplier }).flatMap(() => photos),
+    [multiplier, photos]
+  );
 
   return (
     <MotionConfig reducedMotion="user">
