@@ -19,7 +19,7 @@ import {
 import gsap from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { useGSAP } from "@gsap/react";
-import Image from "next/image";
+import ExportedImage from "next-image-export-optimizer";
 import Link from "next/link";
 import type { PhotoData } from "@/utils/getPhotos";
 
@@ -86,13 +86,12 @@ function GalleryPhoto({
         aria-label={`View ${photo.alt}`}
         data-cursor="View"
       >
-        <Image
+        <ExportedImage
           src={photo.src}
           alt={photo.alt}
           fill
           sizes="25vw"
           className="deal-image object-cover transition-transform duration-700 ease-out group-active:scale-[0.985] group-active:duration-100"
-          quality={85}
           loading={index < 12 ? "eager" : "lazy"}
         />
         <span className="deal-overlay absolute inset-0 bg-[#f5f3f0]/0 transition-colors duration-500" />
@@ -124,13 +123,12 @@ function Thumbnail({
       } ${photo.width >= photo.height ? "w-24" : "w-14 lg:w-24"}`}
       style={{ aspectRatio: photoAspectRatio(photo) }}
     >
-      <Image
+      <ExportedImage
         src={photo.src}
         alt=""
         fill
         sizes="96px"
         className="object-cover"
-        quality={75}
       />
     </button>
   );
@@ -310,14 +308,12 @@ function FocusView({
                 style={{ touchAction: "none" }}
                 data-cursor="Drag"
               >
-                <Image
+                <ExportedImage
                   src={photo.src}
                   alt={photo.alt}
                   fill
                   sizes="(max-width: 1023px) 100vw, calc(100vw - 180px)"
                   className="object-contain"
-                  quality={85}
-                  preload
                   draggable={false}
                 />
               </motion.div>
