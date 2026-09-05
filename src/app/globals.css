@@ -78,7 +78,7 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-
+  font-family: "Neue Rational", Helvetica;
   font-weight: 800;
   /* NOTE: overflow-x on body breaks iOS touch scroll — DO NOT add it here.
      Horizontal overflow is contained at the html level with overflow-x: clip */

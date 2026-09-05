@@ -1,11 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sahil-bhagat-photography.ugk2102.chatgpt.site";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -34,7 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className={`min-h-full flex flex-col text-foreground bg-background ${inter.className}`}>
+      <body className="min-h-full flex flex-col text-foreground bg-background">
         {children}
       </body>
     </html>
