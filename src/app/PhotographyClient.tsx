@@ -92,7 +92,7 @@ function GalleryPhoto({
           fill
           sizes="25vw"
           className="deal-image object-cover transition-transform duration-700 ease-out group-active:scale-[0.985] group-active:duration-100"
-          loading={index < 20 ? "eager" : "lazy"}
+          loading={index < 20 || !isInitialBatch ? "eager" : "lazy"}
           placeholder="blur"
         />
         <span className="deal-overlay absolute inset-0 bg-[#f5f3f0]/0 transition-colors duration-500" />
