@@ -223,7 +223,8 @@ function FocusView({
     const rawSteps = Math.trunc(wheelAccumulatorRef.current / stepThreshold);
 
     if (rawSteps !== 0) {
-      const steps = Math.max(-4, Math.min(4, rawSteps));
+      // Strictly limit to 1 image per tick so it doesn't confusingly skip images
+      const steps = Math.sign(rawSteps);
       wheelAccumulatorRef.current -= steps * stepThreshold;
       onStep(steps);
     }
@@ -248,10 +249,9 @@ function FocusView({
     const intent = Math.abs(info.velocity.x) > 120
       ? info.velocity.x
       : info.offset.x;
-    const steps = Math.max(
-      1,
-      Math.min(4, Math.round(Math.abs(projectedDistance) / 180)),
-    );
+    
+    // Always step exactly 1 image. Skipping multiple images is confusing in a modal.
+    const steps = 1;
 
     onStep(intent < 0 ? steps : -steps);
   }, [onStep]);
